@@ -1,4 +1,2 @@
-# LPBuilder-
-Linear Programming Excel template for COMM 290 class
+Linear Programming Excel setup script for UBC COMM 290: Quantitative Decision-Making 
 
-The builder requires the openpyxl module to be installed for it to work
