@@ -1,0 +1,276 @@
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font
+from openpyxl.styles import NamedStyle, Font, Border, Side, PatternFill, numbers
+
+# styles
+greenFill = NamedStyle(name='greenFill')
+greenFill.fill = fill = PatternFill('solid', fgColor='00008000')
+
+yellowFill = NamedStyle(name='yellowFill')
+yellowFill.fill= fill = PatternFill('solid', fgColor='FFFF00')
+
+borderRight = NamedStyle(name='borderRight')
+borderRight.fill = fill = PatternFill('solid', fgColor='FFFF00')
+borderRight.border = Border(right=Side(border_style='thick', color='0000FF'))
+
+borderLeft = NamedStyle(name='borderLeft')
+borderLeft.border = Border(left=Side(border_style='thick', color='0000FF'))
+
+borderTop = NamedStyle(name='borderTop')
+borderTop.border = Border(top=Side(border_style='thick', color='0000FF'))
+
+borderBot = NamedStyle(name='borderBot')
+borderBot.border = Border(bottom=Side(border_style='thick', color='0000FF'))
+
+borderTopLeft = NamedStyle(name='borderTopLeft')
+borderTopLeft.border = Border(top=Side(border_style='thick', color='0000FF'),
+                          left=Side(border_style='thick', color='0000FF'))
+
+borderTopRight = NamedStyle(name='borderTopRight')
+borderTopRight.border = Border(top=Side(border_style='thick', color='0000FF'),
+                          right=Side(border_style='thick', color='0000FF'))
+borderTopRight.fill = fill = PatternFill('solid', fgColor='FFFF00')
+
+borderBotLeft = NamedStyle(name='borderBotLeft')
+borderBotLeft.border = Border(bottom=Side(border_style='thick', color='0000FF'),
+                          left=Side(border_style='thick', color='0000FF'))
+
+borderBotRight = NamedStyle(name='borderBotRight')
+borderBotRight.border = Border(bottom=Side(border_style='thick', color='0000FF'),
+                          right=Side(border_style='thick', color='0000FF'))
+borderBotRight.fill = fill = PatternFill('solid', fgColor='FFFF00')
+# end styles
+
+wb = Workbook()
+ws = wb.active
+ws.title = 'Test Sheet'
+ws['A1'] = "Input"
+ws['A1'].font = Font(bold=True)
+
+variable_start_column = 3
+variable_end_column = (3 + int(input("Number of variables: ")))
+
+characteristics_start_row = 4
+characteristics_end_row = (4 + int(input("Number of characteristics: ")))
+
+for col in range(variable_start_column, variable_end_column):
+    for row in range(3, 4):
+        char = get_column_letter(col)
+        ws[char +str(row)].value = f"V{col - 2}"
+
+for col in range(2, 3):
+    for row in range(characteristics_start_row, characteristics_end_row):
+        char = get_column_letter(col)
+        ws[char +str(row)].value = f"C{row - 3}"
+
+for col in range(variable_start_column, variable_end_column):
+    for row in range(characteristics_start_row, characteristics_end_row):
+        char = get_column_letter(col)
+        (ws[char + str(row)].value) = 1
+        ws[char + str(row)].style = yellowFill
+
+for col in range(2, 3):
+    for row in range(characteristics_end_row + 1, characteristics_end_row + 2):
+        char = get_column_letter(col)
+        (ws[char + str(row)].value) = "Cost/unit"
+
+
+for col in range(variable_end_column, variable_end_column + 3):
+    for row in range(2, 3):
+        char = get_column_letter(col)
+        (ws[char + str(row)].value) = "Amount"
+
+char = get_column_letter(variable_end_column)
+ws[char + '3'] = 'Used'
+char = get_column_letter(variable_end_column + 2)
+ws[char + '3'] = 'Required'
+
+char = get_column_letter(variable_end_column +1)
+ws[char + '2'] = ''
+ws[char + '3'] = ''
+
+for col in range(variable_end_column, variable_end_column + 1):
+    char = get_column_letter(col)
+    for row in range(characteristics_start_row, characteristics_end_row):
+        ws[char + str(row)].value = f'=SUMPRODUCT({(get_column_letter(variable_start_column) + str(row))}:{(get_column_letter(variable_end_column) + str(row))},{(get_column_letter(variable_start_column) + str(characteristics_end_row + 6))}:{(get_column_letter(variable_end_column) + str(characteristics_end_row + 6))}'
+
+# For creating borders
+
+for col in range(variable_end_column, variable_end_column + 1):
+    for row in range(4, characteristics_end_row):
+        char = get_column_letter(col)
+        ws[char + str(row)].style = borderLeft
+
+for  col in range(variable_end_column, variable_end_column + 3):
+    char = get_column_letter(col)
+    for row in range(characteristics_start_row, characteristics_start_row + 1):
+        ws[char + str(row)].style = borderTop
+    for row in range(characteristics_end_row-1, characteristics_end_row):
+        ws[char + str(row)].style = borderBot
+
+for col in range(variable_end_column + 2, variable_end_column + 3):
+    for row in range(4, characteristics_end_row):
+        char = get_column_letter(col)
+        ws[char +str(row)].style = borderRight
+
+chare = str(characteristics_end_row-1)
+char = get_column_letter(variable_end_column)
+ws[char + '4'].style = borderTopLeft
+ws[char + chare].style = borderBotLeft
+
+char = get_column_letter(variable_end_column + 2)
+ws[char + '4'].style = borderTopRight
+ws[char + chare].style = borderBotRight
+
+
+for col in range(variable_start_column, variable_end_column):
+    for row in range(characteristics_end_row + 1, characteristics_end_row + 2):
+        char = get_column_letter(col)
+        (ws[char +str(row)]).value = 0
+        # objectivecell = f'=SUMPRODUCT({variable_start_column + (characteristics_end_row + 1)}:{variable_end_column + (characteristics_end_row + 1)})/({variable_start_column + (characteristics_end_row + 6)}:{variable_end_column + (characteristics_end_row + 6)}'
+
+for col in range(variable_end_column, variable_end_column+1):
+    for row in range(characteristics_end_row, characteristics_end_row + 1):
+        char = get_column_letter(col)
+        ws[char +str(row)].value = 'Total'
+
+for col in range(variable_end_column, variable_end_column + 1):
+    for row in range(characteristics_end_row + 1, characteristics_end_row + 2):
+        char = get_column_letter(col)
+
+        ws[char +str(row)].value = f'=SUMPRODUCT({get_column_letter(variable_start_column) + str(characteristics_end_row + 1)}:{get_column_letter(variable_end_column - 1) + str(characteristics_end_row + 1)}, {get_column_letter(variable_start_column) + str(characteristics_end_row + 6)}:{(get_column_letter(variable_end_column - 1) + str(characteristics_end_row + 6))})'
+        ws[char + str(row)].style = greenFill
+
+for col in range(1, 2):
+    for row in range(characteristics_end_row + 4, characteristics_end_row + 5):
+        char = get_column_letter(col)
+        ws[char +str(row)].value = 'Action Plan'
+        ws[char +str(row)].font = Font(bold = True)
+
+characteristics_start_row_two = characteristics_end_row + 5
+
+for col in range(variable_start_column, variable_end_column):
+    char = get_column_letter(col)
+    for row in range(characteristics_start_row_two, characteristics_start_row_two + 1):
+        ws[char +str(row)].value = f'V{col - 2}'
+    for row in range(characteristics_start_row_two + 1, characteristics_start_row_two + 2):
+        ws[char +str(row)].border = Border(top=Side(border_style='thick', color = 'FF0000'),
+                                           bottom=Side(border_style='thick', color = 'FF0000'))
+        ws[char +str(row)].value = 1
+
+for col in range(variable_start_column, variable_start_column + 1):
+    for row in range(characteristics_start_row_two + 1, characteristics_start_row_two + 2):
+        char = get_column_letter(col)
+        ws[char + str(row)].border = Border(top=Side(border_style='thick', color='FF0000'),
+                                            bottom=Side(border_style='thick', color='FF0000'),
+                                            left=Side(border_style='thick', color='FF0000'))
+
+for row in range(characteristics_start_row_two + 1, characteristics_start_row_two + 2):
+    for col in range(variable_start_column - 1, variable_start_column):
+        char = get_column_letter(col)
+        ws[char +str(row)].value = '# to add'
+    for col in range(variable_end_column - 1, variable_end_column):
+        char = get_column_letter(col)
+        ws[char + str(row)].border = Border(top=Side(border_style='thick', color='FF0000'),
+                                            bottom=Side(border_style='thick', color='FF0000'),
+                                            right=Side(border_style='thick', color='FF0000'))
+
+# Action Plan Constraints
+
+total_constraints = input('Add constraints next to Action Plan?(y/n): ').lower()
+if 'y' in total_constraints:
+
+    for row in range(characteristics_start_row_two, characteristics_start_row_two + 1):
+        for col in range(variable_end_column, variable_end_column + 1):
+            char = get_column_letter(col)
+            ws[char +str(row)].value = 'Total'
+        for col in range(variable_end_column + 2, variable_end_column + 3):
+            char = get_column_letter(col)
+            ws[char +str(row)].value = 'Constraint'
+
+    for row in range(characteristics_start_row_two + 1, characteristics_start_row_two + 2):
+        for col in range(variable_end_column, variable_end_column + 3):
+            char = get_column_letter(col)
+            ws[char + str(row)].border = Border(top=Side(border_style='thick', color='0000FF'),
+                                                bottom=Side(border_style='thick', color='0000FF'))
+        for col in range(variable_end_column, variable_end_column + 1):
+            ws[char + str(row)].border = Border(top=Side(border_style='thick', color='0000FF'),
+                                                bottom=Side(border_style='thick', color='0000FF'),
+                                                left=Side(border_style='thick', color='0000FF'))
+        for col in range(variable_end_column + 2, variable_end_column + 3):
+            ws[char + str(row)].border = Border(top=Side(border_style='thick', color='0000FF'),
+                                                bottom=Side(border_style='thick', color='0000FF'),
+                                                right=Side(border_style='thick', color='0000FF'))
+            ws[char + str(row)].fill = fill = PatternFill('solid', fgColor='FFFF00')
+
+while True:
+    try:
+        additional_constraints = int(input('Number of additional constraints?: '))
+        if type(additional_constraints) == int and additional_constraints != 0:
+            for col in range(1,2):
+                for row in range(characteristics_end_row + 9, characteristics_end_row + 10):
+                    char = get_column_letter(col)
+                    ws[char +str(row)].value = 'Additional Constraints'
+                    ws[char +str(row)].font = Font(bold = True)
+
+            for row in range(characteristics_end_row + 10, characteristics_end_row + 11):
+                for col in range(variable_end_column, variable_end_column + 1):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].value = 'Total'
+                for col in range(variable_end_column + 2, variable_end_column + 3):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].value = 'Constraint'
+
+            for col in range(2, 3):
+                for row in range(characteristics_end_row + 11, characteristics_end_row + 11 + additional_constraints):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].value = 'Additional Constraints'
+
+            for col in range(variable_end_column, variable_end_column + 3):
+                char = get_column_letter(col)
+                for row in range(characteristics_end_row + 11, characteristics_end_row + 12):
+                    ws[char + str(row)].style = borderTop
+                for row in range(characteristics_end_row + 10 + additional_constraints, characteristics_end_row + 10 + additional_constraints + 1):
+                    ws[char + str(row)].style = borderBot
+
+            for row in range(characteristics_end_row + 11, characteristics_end_row + 11 + additional_constraints):
+                for col in range(variable_end_column, variable_end_column + 1):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].style = borderLeft
+                for col in range(variable_end_column + 2, variable_end_column + 3):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].style = borderRight
+
+
+            for row in range(characteristics_end_row + 11, characteristics_end_row + 12):
+                for col in range(variable_end_column, variable_end_column + 1):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].style = borderTopLeft
+                for col in range(variable_end_column + 2, variable_end_column + 3):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].style = borderTopRight
+
+            for row in range(characteristics_end_row + 10 + additional_constraints, characteristics_end_row + 10 + additional_constraints + 1):
+                for col in range(variable_end_column, variable_end_column + 1):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].style = borderBotLeft
+                for col in range(variable_end_column + 2, variable_end_column + 3):
+                    char = get_column_letter(col)
+                    ws[char + str(row)].style = borderBotRight
+
+            break
+
+        else:
+            print('No additional constraints required.')
+            break
+    except ValueError:
+        print('Please enter an integer, or "0" if no additional constraints needed.')
+
+
+# End Action Plan Constraints
+try:
+    wb.save('test.xlsx')
+except PermissionError:
+    print('Excel is open')
+
